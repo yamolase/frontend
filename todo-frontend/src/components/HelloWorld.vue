@@ -2,7 +2,7 @@
   <div>
     <h1>Selamat Datang </h1>
     <ul>
-      <li v-for="(item,idx) in todos" :key="item.id">{{idx+1}} - {{item.deskripsi}}<button @click="hapus(item.id)">X</button> </li>
+      <li v-for="item in todos" :key="item.id"> {{item.deskripsi}}<button @click="hapus(item.id)">X</button> </li>
     </ul>
     <input v-model="myText" />
     <button @click="Tambah">Add</button>
@@ -10,43 +10,45 @@
   </div>
 </template>
 
-<script >
+ <script >
 import axios from 'axios'
-export default{
-  data: function(){
-    return{
-      todos:[],
-      myText :''
-      
+
+export default {
+  data:function() {
+    return {
+      todos: [],
+      myText: ''
     }
   },
-  create:function(){
+  created: function () {
     axios.get('http://localhost:3000/todo')
-      .then(result=>{
-        this.todos = result.data
-      })
+    .then(result=>{
+      this.todos = result.data   
+    })
   },
-
-  methods: { 
-    Tambah: function(){      
-      const newItem = {deskripsi :this.myText}
-      axios.post('http://localhost:3000/todo',newItem)
-      this.todos.push(newItem)
-      this.myText=""
-      
+  methods: {
+    tambah: function (){
+      const newItem = {deskripsi: this.myText}
+      axios.post('http://localhost:3000/todo', newItem)
+        .then(()=>{
+          this.todos.push(newItem)
+          location.reload()
+        })
+      this.myText = ''
     },
-    hapus:function(id){
-      axios.delete('http://localhost:3000/todo/delete/${id}').then(()=>{
-        for (var i=0;i<this.newItem.lenght;i++) {
-          if(this.newItem[i].id==id)
-              this.newItem.splice(i,1)
+    hapus: function (id) {
+      axios.delete(`http://localhost:3000/todo/${id}`)
+        .then(()=>{
+          for(var i = 0; i<this.todos.length; i++){
+            if(this.todos[i].id == id) {
+              this.todos.splice(i,1)
+            }
+          }
           
-        }
-      })
-    } 
+        })
+    }
   }
 }
-
-</script>
+ </script>
 
 
